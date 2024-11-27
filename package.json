@@ -1,0 +1,10 @@
+{
+  "name": "flatbread-tiles",
+  "type": "module",
+  "license": "CC0-1.0",
+  "packageManager": "yarn@4.5.0",
+  "dependencies": {
+    "postgres": "^3.4.4",
+    "yargs": "^17.7.2"
+  }
+}

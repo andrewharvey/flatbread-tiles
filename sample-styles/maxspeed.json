@@ -1,0 +1,86 @@
+{
+  "id": "maxspeed",
+  "type": "line",
+  "source": "flatbread",
+  "source-layer": "flatbread",
+  "filter": [
+    "all",
+    ["==", "$type", "LineString"],
+    [
+      "in",
+      "highway",
+      "motorway",
+      "motorway_link",
+      "trunk",
+      "trunk_link",
+      "primary",
+      "primary_link",
+      "secondary",
+      "secondary_link",
+      "tertiary",
+      "tertiary_link",
+      "unclassified",
+      "residential",
+      "service"
+    ],
+    [
+      "any",
+      ["!=", "highway", "service"],
+      [
+        "all",
+        ["==", "highway", "service"],
+        ["!has", "service"]
+      ]
+    ]
+  ],
+  "paint": {
+    "line-color": [
+      "match",
+      ["get", "maxspeed"],
+      "5",
+      "#b83939",
+      "10",
+      "#b83939",
+      "15",
+      "#b83939",
+      "20",
+      "#b83939",
+      "30",
+      "#f0a10d",
+      "40",
+      "#dade00",
+      "50",
+      "#6bb855",
+      "60",
+      "#10debf",
+      "70",
+      "#0fa0de",
+      "80",
+      "#0f4dde",
+      "90",
+      "#5810de",
+      "100",
+      "#8612de",
+      "110",
+      "#bf0fde",
+      "120",
+      "#de11ab",
+      "130",
+      "#de11ab",
+      "#333333"
+    ],
+    "line-width": {
+      "stops": [
+        [10, 0.5],
+        [12, 1],
+        [16, 2],
+        [18, 8]
+      ]
+    },
+    "line-opacity": 1
+  },
+  "layout": {
+    "line-join": "miter",
+    "line-cap": "round"
+  }
+}

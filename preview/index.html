@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>PMTiles source and protocol</title>
+    <meta property="og:description" content="Uses the PMTiles plugin and protocol to present a map." />
+    <meta charset='utf-8'>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel='stylesheet' href='https://unpkg.com/maplibre-gl@4.7.0/dist/maplibre-gl.css' />
+    <script src='https://unpkg.com/maplibre-gl@4.7.0/dist/maplibre-gl.js'></script>
+    <script src="https://unpkg.com/pmtiles@3.0.6/dist/pmtiles.js"></script>
+    <style>
+        body { margin: 0; padding: 0; }
+        html, body, #map { height: 100%; }
+    </style>
+</head>
+<body>
+<div id="map"></div>
+<script>
+
+    // add the PMTiles plugin to the maplibregl global.
+    const protocol = new pmtiles.Protocol();
+    maplibregl.addProtocol('pmtiles', protocol.tile);
+
+    const PMTILES_URL = '/data/tiles.pmtiles';
+
+    const p = new pmtiles.PMTiles(PMTILES_URL);
+
+    // this is so we share one instance across the JS code and the map renderer
+    protocol.add(p);
+
+    // we first fetch the header so we can get the center lon, lat of the map.
+    p.getHeader().then(h => {
+      console.log(h)
+        const map = new maplibregl.Map({
+            container: 'map',
+            zoom: h.maxZoom - 2,
+            center: [h.centerLon, h.centerLat],
+            style: {
+                version: 8,
+                sources: {
+                    'flatbread': {
+                        type: 'vector',
+                        url: `pmtiles://${PMTILES_URL}`,
+                        attribution: '© <a href="https://openstreetmap.org">OpenStreetMap</a>'
+                    }
+                },
+                layers: [
+                    {
+                        'id': 'speed-limits',
+                        'source': 'flatbread',
+                        'source-layer': 'flatbread',
+                        'type': 'line',
+                        'paint': {
+                            'line-width': 2,
+                            'line-color': ['match',
+                              ['get', 'maxspeed'],
+                              '10', 'green',
+                              '20', 'green',
+                              '30', 'green',
+                              '40', 'green',
+                              '50', 'blue',
+                              '60', 'blue',
+                              '70', 'blue',
+                              '80', 'blue',
+                              '90', 'blue',
+                              '100', 'red',
+                              '110', 'red',
+                              'black'
+                            ]
+                        },
+                        'filter': [
+                          'all',
+                          ['in', '$type', 'LineString'],
+                          ['in',
+                            'highway',
+                            'motorway', 'motorway_link', 'trunk', 'trunk_link', 'primary', 'primary_link', 'secondary', 'secondary_link', 'tertiary', 'tertiary_link', 'unclassified', 'residential', 'service'
+                          ]
+                        ]
+                    }
+                ]
+            }
+        });
+    });
+</script>
+</body>
+</html>
